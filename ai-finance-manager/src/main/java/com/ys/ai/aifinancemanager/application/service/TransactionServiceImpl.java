@@ -6,9 +6,11 @@ import com.ys.ai.aifinancemanager.application.dto.TransactionDto;
 import com.ys.ai.aifinancemanager.application.dto.TransactionExportResponse;
 import com.ys.ai.aifinancemanager.application.dto.TransactionExportResponse.TransactionExportDetail;
 import com.ys.ai.aifinancemanager.application.dto.TransactionsByTypeResponse;
+import com.ys.ai.aifinancemanager.application.dto.TransactionsByTypeResponse.CategoryTransactionSummary;
 import com.ys.ai.aifinancemanager.application.mapper.CategoryMapper;
 import com.ys.ai.aifinancemanager.application.mapper.TransactionMapper;
 import com.ys.ai.aifinancemanager.application.validation.ValidationUtils;
+import com.ys.ai.aifinancemanager.domain.entity.Category;
 import com.ys.ai.aifinancemanager.domain.entity.CategoryType;
 import com.ys.ai.aifinancemanager.domain.entity.Transaction;
 import com.ys.ai.aifinancemanager.domain.repository.CategoryRepository;
@@ -23,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -83,19 +86,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     // Build category summaries
     var categorySummaries = transactionsByCategory.entrySet().stream()
-        .map(entry -> {
-          var categoryDto = categoryMapper.toDto(entry.getKey());
-          var transactionDtos = transactionMapper.toDtoList(entry.getValue());
-          var categoryTotal = entry.getValue().stream()
-              .map(Transaction::getAmount)
-              .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-          return TransactionsByTypeResponse.CategoryTransactionSummary.builder()
-              .category(categoryDto)
-              .transactions(transactionDtos)
-              .categoryTotal(categoryTotal)
-              .build();
-        })
+        .map(this::toCategoryTransactionSummary)
         .toList();
 
     // Calculate total amount across all categories
@@ -146,6 +137,20 @@ public class TransactionServiceImpl implements TransactionService {
 
     return TransactionExportResponse.builder()
         .transactions(transactionDetails)
+        .build();
+  }
+
+  private CategoryTransactionSummary toCategoryTransactionSummary(Entry<Category, List<Transaction>> entry) {
+    var categoryDto = categoryMapper.toDto(entry.getKey());
+    var transactionDtos = transactionMapper.toDtoList(entry.getValue());
+    var categoryTotal = entry.getValue().stream()
+        .map(Transaction::getAmount)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    return CategoryTransactionSummary.builder()
+        .category(categoryDto)
+        .transactions(transactionDtos)
+        .categoryTotal(categoryTotal)
         .build();
   }
 

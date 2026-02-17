@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: ai-finance-manager-test
+
+  datasource:
+    url: jdbc:sqlite::memory:
+    driver-class-name: org.sqlite.JDBC
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+logging:
+  level:
+    org.flywaydb: INFO
+    com.ys.ai.aifinancemanager: DEBUG
+    org.springframework.web: DEBUG
+
