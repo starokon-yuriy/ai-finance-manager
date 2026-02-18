@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Finance Manager - Test Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        .info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(255, 107, 107, 0.6);
+        }
+
+        .response {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .note {
+            background: rgba(255, 193, 7, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Hello World!</h1>
+        <h2>AI Finance Manager</h2>
+
+        <div class="info">
+            <p style="text-align: center; font-size: 1.1rem; line-height: 1.6;">
+                This is a simple test page for your AI Finance Manager
+            </p>
+            <div class="status" id="status">
+                <strong>Backend Status:</strong> <span id="statusText">Not tested yet</span>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>📝 Note:</strong> This is a standalone test page. For the full React experience,
+            follow the setup instructions in <strong>FRONTEND_SETUP.md</strong>
+        </div>
+
+        <button onclick="testBackend()">Test Backend Connection</button>
+
+        <div id="response" class="response hidden"></div>
+    </div>
+
+    <script>
+        async function testBackend() {
+            const statusText = document.getElementById('statusText');
+            const responseDiv = document.getElementById('response');
+
+            statusText.textContent = 'Testing...';
+            responseDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('http://localhost:8080/api/transactions');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                statusText.textContent = 'Connected ✅';
+                statusText.style.color = '#4caf50';
+
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+                responseDiv.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error:', error);
+                statusText.textContent = 'Disconnected ❌';
+                statusText.style.color = '#f44336';
+
+                responseDiv.textContent = `Error: ${error.message}\n\nMake sure:\n1. Spring Boot backend is running\n2. It's accessible at http://localhost:8080\n3. CORS is properly configured`;
+                responseDiv.classList.remove('hidden');
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(testBackend, 1000);
+        });
+    </script>
+</body>
+</html>
+
