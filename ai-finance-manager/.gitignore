@@ -1,3 +1,4 @@
+### Backend (Spring Boot / Maven) ###
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -31,3 +32,46 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Frontend (React / Node.js) ###
+# dependencies
+frontend/node_modules
+frontend/.pnp
+frontend/.pnp.js
+
+# testing
+frontend/coverage
+
+# production
+frontend/build
+
+# misc
+.DS_Store
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+### Application Specific ###
+# Database files
+*.db
+*.db-journal
+
+# Log files
+*.log
+backend.log
+startup.log
+
+# Generated documentation (keep originals only)
+FIX_COMPLETE.md
+INTEGRATION_COMPLETE.md
+INTEGRATION_SUMMARY.md
+
+# OS specific
+.DS_Store
+Thumbs.db
+

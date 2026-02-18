@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {CategoryMapper.class})
+@Mapper(uses = {CategoryMapper.class})
 public interface TransactionMapper {
 
   TransactionDto toDto(Transaction transaction);

@@ -6,8 +6,7 @@ import com.ys.ai.aifinancemanager.domain.entity.Category;
 import com.ys.ai.aifinancemanager.domain.entity.CategoryType;
 import com.ys.ai.aifinancemanager.domain.entity.Transaction;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,11 +15,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class TransactionMapperTest {
 
-  @Autowired
-  private TransactionMapper transactionMapper;
+  private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
 
   @Test
   void toDto_shouldMapTransactionEntityToDtoCorrectly() {

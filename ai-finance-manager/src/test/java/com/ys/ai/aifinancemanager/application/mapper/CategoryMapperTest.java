@@ -4,16 +4,13 @@ import com.ys.ai.aifinancemanager.application.dto.CategoryDto;
 import com.ys.ai.aifinancemanager.domain.entity.Category;
 import com.ys.ai.aifinancemanager.domain.entity.CategoryType;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mapstruct.factory.Mappers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class CategoryMapperTest {
 
-  @Autowired
-  private CategoryMapper categoryMapper;
+  private final CategoryMapper categoryMapper = Mappers.getMapper(CategoryMapper.class);
 
   @Test
   void toDto_shouldMapCategoryEntityToDtoCorrectly() {
