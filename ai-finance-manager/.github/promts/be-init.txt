@@ -1,0 +1,49 @@
+create simple Spring boot Rest application
+for Personal finance manager
+
+add support of SQLlite as Data base, configure it to work with Spring Data JPA
+
+create SQL script for creating tables and inserting initial data for the application:
+
+CREATE TABLE IF NOT EXISTS CATEGORY (
+    ID_CATEGORY INTEGER PRIMARY KEY AUTOINCREMENT,
+    DESCRIPTION varchar(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS Transaction (
+    ID_TRANSACTION INTEGER PRIMARY KEY AUTOINCREMENT,
+    AMOUNT DECIMAL(10, 2) NOT NULL,
+    TRANSACTION_DATE DATE NOT NULL,
+    TRANSACTION_TYPE ENUM(INCOMES, EXPENSES) NOT NULL,
+    ID_CATEGORY INTEGER,
+    FOREIGN KEY (ID_CATEGORY) REFERENCES CATEGORY(ID_CATEGORY)
+    COMMENT varchar(255) NULL,
+);
+execute the sql script during application startup
+
+Crete Entity classes for Category and Transaction, and corresponding Repository interfaces using Spring Data JPA.
+Create DTO classes for Category and Transaction to transfer data between the application layers. Use MapStruct to map between Entity and DTO classes.
+Create Service classes for Transaction to handle business logic and interact with the Repository layer. Implement methods for adding transactions, retrieving by period, fetching all categories, and fetching transactions grouping by categories.
+
+use instructions from the .github/instructions/* files to implement the required functionality in the application.
+
+--------------------------------------------
+
+extend the CATEGORY table to include a new column TYPE ENUM(INCOMES, EXPENSES) NOT NULL,  Update the SQL script and code accordingly.
+Salary, Other Income are INCOMES type, all other categories are EXPENSES type. Update the initial data insertion in the SQL script to reflect this change.
+getAllCategories method should have parameter Type (INCOMES, EXPENSES), and return categories based on the provided type. Update the Service and Repository layers to support this functionality.
+
+--------------------------------------------
+
+the api /transactions and /transactions/by-category should be updated and combined to a single endpoint /transactions with required query parameter type (TRANSACTION_TYPE: INCOMES, EXPENSES) to filter transactions based on their type.
+the amount column should be grouped by categories and returned in the response.
+the api should filter dateFrom and dateTo as required query parameters to filter transactions by date range.
+Update the Service layer to handle this new requirement and return transactions accordingly.
+-----------------------------------------------------------
+
+create a new api to download transactions to CSV file
+api params dateFrom, dateTo
+The API should generate a CSV file containing transactions within the specified date range and return it as a downloadable response.
+The CSV file should include columns for transaction ID, amount, transaction date, transaction type, category description, and comment. Implement the necessary logic in the Service layer to fetch the transactions based on the date range and generate the CSV file.
+
+

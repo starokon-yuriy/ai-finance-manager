@@ -1,0 +1,29 @@
+the method exportTransactionsToCsv should be renamed to exportTransactions and should return Dto with full information about the transactions, for the period defined by the dateFrom and dateTo parameters.
+The Dto should include list of transactions for each category with their details (transaction ID, amount, transaction date, category description, category type, transaction type, comment).
+the csv file generation should be moved to the class responsible for handling the file generation,(apply single responsibility principle to all service classes)
+and apply the Dto from exportTransactions method.
+------------------------------------------------------------
+the csv file should have simple flat structure to include all data from Transaction entity. no grouping by categories required.
+the list of transactions in the csv file should be sorter by CategoryType, first INCOMES, second EXPENSES.
+update the exportTransactions method to return a flat list of transactions sorted by CategoryType, and update the CSV file generation logic to reflect this change. The CSV file should include columns for transaction ID, transaction date, amount, category description, category type, and comment.
+-------------------------------------------------------------
+
+the column TRANSACTION.TRANSACTION_TYPE is redundant, as the transaction type can be determined from the category type.
+Remove the TRANSACTION_TYPE column from the database schema and update the SQL script accordingly. Update the Entity classes,
+Repository interfaces, Service layer, and API endpoints to reflect this change.
+The transaction type should now be derived from the associated category's type when fetching transactions.
+
+--------------------------------------------------------------
+move Objects.requireNonNull to the separate validation methods in the Service layer to improve code readability and maintainability.
+Create a utility class for validation if necessary, reuse the validation methods across different service classes to ensure consistency and reduce code duplication.
+Update the Service layer to use these new validation methods instead of directly calling Objects.requireNonNull in the business logic.
+
+---------------------------------------------------------------
+The db initialisation script is not runed during application startup, causing the database to be empty and the application to fail when trying to access data.
+Investigate the application configuration to ensure that the SQL script is correctly set up to run during startup. Or add DB migration tool like Flyway or Liquibase to manage database schema and data initialization.
+This will ensure that the database is properly initialized with the required tables and initial data when the application starts. Update the application configuration to integrate the chosen migration tool and create migration scripts for creating tables and inserting initial data.
+
+
+
+
+
