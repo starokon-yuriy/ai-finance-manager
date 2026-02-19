@@ -43,6 +43,9 @@
       "last 1 safari version"
     ]
   },
+  "overrides": {
+    "bfj": "^9.1.3"
+  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
