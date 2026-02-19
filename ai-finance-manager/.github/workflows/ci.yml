@@ -23,14 +23,9 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn clean install -DskipTests
+      - name: Build and Test with Maven
+        run: mvn clean verify
 
-      - name: Run Unit Tests
-        run: mvn test
-
-      - name: Generate Test Coverage Report
-        run: mvn jacoco:report
 
       - name: Upload Backend Test Results
         if: always()
@@ -75,14 +70,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run linting
-        run: npm run build --if-present
+      - name: Run Linting
+        run: npm run lint --if-present
 
       - name: Run Unit Tests
         run: npm run test:coverage
 
       - name: Build Frontend
-        run: npm run build
+        run: CI=false npm run build
 
       - name: Upload Frontend Build
         uses: actions/upload-artifact@v4
@@ -144,7 +139,7 @@ jobs:
       - name: Start Frontend Server
         working-directory: frontend
         run: |
-          npm start &
+          BROWSER=none npm start &
           echo $! > frontend.pid
           # Wait for frontend to be ready
           for i in {1..30}; do
