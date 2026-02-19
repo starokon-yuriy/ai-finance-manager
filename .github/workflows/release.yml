@@ -1,0 +1,162 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build Release Artifacts
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ai-finance-manager
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: ai-finance-manager/frontend/package-lock.json
+
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Build Backend
+        run: |
+          mvn clean package -DskipTests
+          mv target/ai-finance-manager-*.jar target/ai-finance-manager-${{ steps.version.outputs.version }}.jar
+
+      - name: Install Frontend Dependencies
+        working-directory: ai-finance-manager/frontend
+        run: npm ci
+
+      - name: Build Frontend Production Bundle
+        working-directory: ai-finance-manager/frontend
+        run: |
+          CI=false npm run build
+          cd build
+          tar -czf ../../frontend-${{ steps.version.outputs.version }}.tar.gz .
+
+      - name: Create Release Package
+        run: |
+          mkdir -p release-package
+          cp target/ai-finance-manager-${{ steps.version.outputs.version }}.jar release-package/
+          cp frontend-${{ steps.version.outputs.version }}.tar.gz release-package/
+          cp README.md release-package/
+          cp compose.yaml release-package/ || echo "No compose.yaml found"
+
+          # Create a deployment guide
+          cat > release-package/DEPLOYMENT.md << 'EOF'
+          # Deployment Guide
+
+          ## Prerequisites
+          - Java 21 or higher
+          - Node.js 18 or higher (for frontend development)
+
+          ## Backend Deployment
+
+          1. Extract the release package
+          2. Run the backend:
+             ```bash
+             java -jar ai-finance-manager-VERSION.jar
+             ```
+          3. Backend will be available at http://localhost:8080
+
+          ## Frontend Deployment
+
+          1. Extract the frontend bundle:
+             ```bash
+             tar -xzf frontend-VERSION.tar.gz -C /var/www/html
+             ```
+          2. Configure your web server (nginx/apache) to serve the frontend files
+
+          ## Environment Variables
+
+          Backend:
+          - `SERVER_PORT`: Server port (default: 8080)
+          - `SPRING_DATASOURCE_URL`: Database URL
+
+          Frontend:
+          - `REACT_APP_API_URL`: Backend API URL
+          EOF
+
+          cd release-package
+          tar -czf ../ai-finance-manager-${{ steps.version.outputs.version }}-release.tar.gz .
+
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            cat CHANGELOG.md > changelog.txt
+          else
+            echo "## Changes in ${{ steps.version.outputs.version }}" > changelog.txt
+            git log --oneline --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> changelog.txt || echo "- Initial release" >> changelog.txt
+          fi
+          cat changelog.txt
+
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts-${{ steps.version.outputs.version }}
+          path: |
+            ai-finance-manager/ai-finance-manager-${{ steps.version.outputs.version }}-release.tar.gz
+            ai-finance-manager/target/ai-finance-manager-${{ steps.version.outputs.version }}.jar
+            ai-finance-manager/frontend-${{ steps.version.outputs.version }}.tar.gz
+            ai-finance-manager/changelog.txt
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ai-finance-manager/ai-finance-manager-${{ steps.version.outputs.version }}-release.tar.gz
+            ai-finance-manager/target/ai-finance-manager-${{ steps.version.outputs.version }}.jar
+            ai-finance-manager/frontend-${{ steps.version.outputs.version }}.tar.gz
+          body_path: ai-finance-manager/changelog.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Summary
+        run: |
+          echo "## Release Build Complete! 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts Created:" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend JAR: ai-finance-manager-${{ steps.version.outputs.version }}.jar" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend Bundle: frontend-${{ steps.version.outputs.version }}.tar.gz" >> $GITHUB_STEP_SUMMARY
+          echo "- Complete Release Package: ai-finance-manager-${{ steps.version.outputs.version }}-release.tar.gz" >> $GITHUB_STEP_SUMMARY
+
