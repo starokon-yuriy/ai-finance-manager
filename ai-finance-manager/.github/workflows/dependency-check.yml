@@ -117,7 +117,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run OWASP Dependency Check
-        uses: dependency-check/Dependency-Check_Action@main
+        uses: dependency-check/Dependency-Check_Action@v3.0.0
         with:
           project: 'ai-finance-manager'
           path: '.'
