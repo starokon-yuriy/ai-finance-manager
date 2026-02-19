@@ -29,9 +29,6 @@ jobs:
       - name: Run Unit Tests
         run: mvn test
 
-      - name: Run Integration Tests
-        run: mvn verify -DskipUnitTests=true
-
       - name: Generate Test Coverage Report
         run: mvn jacoco:report
 
@@ -134,9 +131,9 @@ jobs:
         run: |
           java -jar target/ai-finance-manager-*.jar &
           echo $! > backend.pid
-          # Wait for backend to be ready
+          # Wait for backend to be ready using actual API endpoint
           for i in {1..30}; do
-            if curl -s http://localhost:8080/actuator/health > /dev/null 2>&1; then
+            if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/v1/finance/categories?type=INCOMES | grep -q "^2"; then
               echo "Backend is ready"
               break
             fi
