@@ -9,8 +9,8 @@ A full-stack personal finance management application with Spring Boot backend an
 - **Maven 3.6+** (or use included Maven wrapper `./mvnw`)
 
 ### Frontend Requirements
-- **Node.js 18** or higher
-- **npm** (comes with Node.js)
+- **Node.js 18** (matches CI environment — higher versions may cause lock file drift)
+- **npm 10+** (comes with Node.js 18)
 
 ### Optional Tools
 - **jq** - for pretty-printing JSON responses: `brew install jq`
@@ -102,12 +102,14 @@ npm start
 ### Frontend
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| React | 18.2.0 | UI framework |
+| React | 18.3.1 | UI framework |
 | React Scripts | 5.0.1 | Build tooling |
-| Axios | 1.6.0 | HTTP client |
-| Cypress | 13.6.0 | E2E testing |
+| Axios | 1.13.5 | HTTP client |
+| Cypress | 13.17.0 | E2E testing |
 | Jest | (via React Scripts) | Unit testing |
-| React Testing Library | 13.4.0 | Component testing |
+| @testing-library/react | 13.4.0 | Component testing |
+| @testing-library/jest-dom | 5.17.0 | DOM matchers |
+| @testing-library/user-event | 14.6.1 | User interaction testing |
 
 ---
 

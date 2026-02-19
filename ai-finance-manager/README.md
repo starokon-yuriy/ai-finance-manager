@@ -2,7 +2,7 @@
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
 [![SQLite](https://img.shields.io/badge/SQLite-3.45.1.0-blue.svg)](https://www.sqlite.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -185,14 +185,17 @@ This will:
 
 | Technology | Version | Purpose | Documentation |
 |------------|---------|---------|---------------|
-| **React** | 18.2.0 | UI library | [React](https://reactjs.org/) |
+| **React** | 18.3.1 | UI library | [React](https://reactjs.org/) |
 | **React Scripts** | 5.0.1 | Build tooling (CRA) | [Create React App](https://create-react-app.dev/) |
-| **Axios** | 1.6.0 | HTTP client | [Axios](https://axios-http.com/) |
+| **Axios** | 1.13.5 | HTTP client | [Axios](https://axios-http.com/) |
 | **Jest** | (via React Scripts) | Unit testing | [Jest](https://jestjs.io/) |
-| **React Testing Library** | 13.4.0 | Component testing | [Testing Library](https://testing-library.com/) |
-| **Cypress** | 13.6.0 | E2E testing | [Cypress](https://www.cypress.io/) |
+| **@testing-library/react** | 13.4.0 | Component testing | [Testing Library](https://testing-library.com/) |
+| **@testing-library/jest-dom** | 5.17.0 | DOM matchers | [jest-dom](https://github.com/testing-library/jest-dom) |
+| **@testing-library/user-event** | 14.6.1 | User interaction testing | [user-event](https://testing-library.com/docs/user-event/intro/) |
+| **Cypress** | 13.17.0 | E2E testing | [Cypress](https://www.cypress.io/) |
 | **CSS3** | - | Styling | - |
-| **npm** | 8+ | Package manager | [npm](https://www.npmjs.com/) |
+| **Node.js** | 18+ | Runtime (matches CI) | [Node.js](https://nodejs.org/) |
+| **npm** | 10+ | Package manager | [npm](https://www.npmjs.com/) |
 
 ### Development & DevOps Tools
 
