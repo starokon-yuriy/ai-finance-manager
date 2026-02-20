@@ -8,14 +8,18 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'pom.xml'
-      - 'frontend/package.json'
-      - 'frontend/package-lock.json'
+      - 'ai-finance-manager/pom.xml'
+      - 'ai-finance-manager/frontend/package.json'
+      - 'ai-finance-manager/frontend/package-lock.json'
 
 jobs:
   dependency-audit:
     name: Dependency Audit
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ai-finance-manager
 
     steps:
       - name: Checkout code
@@ -33,7 +37,7 @@ jobs:
           echo "## Maven Dependency Check" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           mvn versions:display-dependency-updates | tee maven-updates.txt
-          
+
           if grep -q "No dependencies in Dependencies have newer versions" maven-updates.txt; then
             echo "✅ All Maven dependencies are up to date" >> $GITHUB_STEP_SUMMARY
           else
@@ -46,7 +50,7 @@ jobs:
           echo "## Maven Plugin Check" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           mvn versions:display-plugin-updates | tee maven-plugin-updates.txt
-          
+
           if grep -q "All plugins have a version specified" maven-plugin-updates.txt; then
             echo "✅ All Maven plugins are properly versioned" >> $GITHUB_STEP_SUMMARY
           fi
@@ -59,42 +63,42 @@ jobs:
         with:
           name: maven-dependency-reports
           path: |
-            maven-updates.txt
-            maven-plugin-updates.txt
-            maven-dependency-tree.txt
+            ai-finance-manager/maven-updates.txt
+            ai-finance-manager/maven-plugin-updates.txt
+            ai-finance-manager/maven-dependency-tree.txt
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: ai-finance-manager/frontend/package-lock.json
 
       - name: Install Frontend Dependencies
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: npm ci
 
       - name: Run npm audit
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: |
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## NPM Security Audit" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           npm audit --audit-level=moderate || {
             echo "⚠️ NPM audit found vulnerabilities" >> $GITHUB_STEP_SUMMARY
             echo "Run 'npm audit fix' to resolve" >> $GITHUB_STEP_SUMMARY
           }
 
       - name: Check for npm outdated packages
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: |
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## NPM Outdated Packages" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           npm outdated > npm-outdated.txt || true
-          
+
           if [ -s npm-outdated.txt ]; then
             echo "⚠️ Some NPM packages have updates available" >> $GITHUB_STEP_SUMMARY
             cat npm-outdated.txt
@@ -106,7 +110,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: npm-dependency-reports
-          path: frontend/npm-outdated.txt
+          path: ai-finance-manager/frontend/npm-outdated.txt
 
   owasp-dependency-check:
     name: OWASP Dependency Check

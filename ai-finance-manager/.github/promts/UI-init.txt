@@ -1,0 +1,18 @@
+
+-------------------------
+need to add simple UI for the application, using React as Js framework.
+create a module for the UI in the project structure, and set up a basic React application using Create React App or a similar tool.
+create hello world  simple page to verify that the UI is working correctly
+
+Create a React frontend in a separate directory
+Install npm and initialize a React project
+Configure it to work with your Spring Boot backend
+
+
+
+------------------
+
+Apply updates for the 3rd Balance tab:
+Incomes table, add columns Amount and Date in Total should be the sum amount income rows
+Expenses table, add columns Category, Amount in Total should be the sum amount expenses rows
+Also add some sample data to the tables, to visualise

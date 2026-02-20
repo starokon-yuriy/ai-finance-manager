@@ -12,6 +12,10 @@ jobs:
     name: Backend Build & Test
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ai-finance-manager
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,28 +27,22 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn clean install -DskipTests
-
-      - name: Run Unit Tests
-        run: mvn test
-
-      - name: Generate Test Coverage Report
-        run: mvn jacoco:report
+      - name: Build and Test with Maven
+        run: mvn clean verify
 
       - name: Upload Backend Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: backend-test-results
-          path: target/surefire-reports/
+          path: ai-finance-manager/target/surefire-reports/
 
       - name: Upload Backend Coverage Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage-report
-          path: target/site/jacoco/
+          path: ai-finance-manager/target/site/jacoco/
 
       - name: Check Test Coverage
         run: |
@@ -59,7 +57,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
 
     steps:
       - name: Checkout code
@@ -70,37 +68,41 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: ai-finance-manager/frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run linting
-        run: npm run build --if-present
+      - name: Run Linting
+        run: npm run lint --if-present
 
       - name: Run Unit Tests
         run: npm run test:coverage
 
       - name: Build Frontend
-        run: npm run build
+        run: CI=false npm run build
 
       - name: Upload Frontend Build
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: frontend/build/
+          path: ai-finance-manager/frontend/build/
 
       - name: Upload Frontend Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: frontend-test-results
-          path: frontend/coverage/
+          path: ai-finance-manager/frontend/coverage/
 
   e2e-tests:
     name: E2E Tests (Cypress)
     runs-on: ubuntu-latest
     needs: [backend-build-and-test, frontend-build-and-test]
+
+    defaults:
+      run:
+        working-directory: ai-finance-manager
 
     steps:
       - name: Checkout code
@@ -118,13 +120,13 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: ai-finance-manager/frontend/package-lock.json
 
       - name: Build Backend
         run: mvn clean package -DskipTests
 
       - name: Install Frontend Dependencies
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: npm ci
 
       - name: Start Backend Server
@@ -133,7 +135,7 @@ jobs:
           echo $! > backend.pid
           # Wait for backend to be ready using actual API endpoint
           for i in {1..30}; do
-            if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/v1/finance/categories?type=INCOMES | grep -q "^2"; then
+            if curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/api/v1/finance/categories?type=INCOMES" | grep -q "^2"; then
               echo "Backend is ready"
               break
             fi
@@ -142,9 +144,9 @@ jobs:
           done
 
       - name: Start Frontend Server
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: |
-          npm start &
+          BROWSER=none npm start &
           echo $! > frontend.pid
           # Wait for frontend to be ready
           for i in {1..30}; do
@@ -157,7 +159,7 @@ jobs:
           done
 
       - name: Run Cypress E2E Tests
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: npm run cypress:run
 
       - name: Upload Cypress Screenshots
@@ -165,17 +167,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cypress-screenshots
-          path: frontend/cypress/screenshots/
+          path: ai-finance-manager/frontend/cypress/screenshots/
 
       - name: Upload Cypress Videos
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-videos
-          path: frontend/cypress/videos/
+          path: ai-finance-manager/frontend/cypress/videos/
 
       - name: Stop Servers
-        if: always()
         run: |
           if [ -f backend.pid ]; then
             kill $(cat backend.pid) || true
@@ -199,7 +200,7 @@ jobs:
           echo "✅ Frontend Build & Test: ${{ needs.frontend-build-and-test.result }}" >> $GITHUB_STEP_SUMMARY
           echo "✅ E2E Tests: ${{ needs.e2e-tests.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [ "${{ needs.backend-build-and-test.result }}" != "success" ] || \
              [ "${{ needs.frontend-build-and-test.result }}" != "success" ] || \
              [ "${{ needs.e2e-tests.result }}" != "success" ]; then

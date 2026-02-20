@@ -25,7 +25,7 @@ jobs:
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           echo "PR Title: $PR_TITLE"
-          
+
           # Check if PR title follows conventional commits format
           if [[ ! "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?:\ .+ ]]; then
             echo "❌ PR title should follow conventional commits format"
@@ -46,6 +46,10 @@ jobs:
   code-quality:
     name: Code Quality Check
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ai-finance-manager
 
     steps:
       - name: Checkout code
@@ -71,14 +75,14 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: ai-finance-manager/frontend/package-lock.json
 
       - name: Install Frontend Dependencies
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: npm ci
 
       - name: Run ESLint (if configured)
-        working-directory: frontend
+        working-directory: ai-finance-manager/frontend
         run: |
           if [ -f .eslintrc.js ] || [ -f .eslintrc.json ] || grep -q "eslint" package.json; then
             npm run lint --if-present || echo "⚠️ No lint script found"
@@ -90,7 +94,7 @@ jobs:
         run: |
           echo "## TODO/FIXME Comments" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Search for TODO and FIXME comments
           if grep -rn "TODO\|FIXME" src/ frontend/src/ 2>/dev/null | head -20; then
             echo "⚠️ Found TODO/FIXME comments (first 20 shown)" >> $GITHUB_STEP_SUMMARY
@@ -125,9 +129,9 @@ jobs:
         run: |
           echo "## Security Check" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Basic check for common secret patterns
-          if grep -r -E "(password|secret|api_key|apikey|token)\s*=\s*['\"][^'\"]+['\"]" src/ frontend/src/ --exclude-dir=test 2>/dev/null | head -10; then
+          if grep -r -E "(password|secret|api_key|apikey|token)\s*=\s*['\"][^'\"]+['\"]" ai-finance-manager/src/ ai-finance-manager/frontend/src/ --exclude-dir=test 2>/dev/null | head -10; then
             echo "⚠️ Potential hardcoded secrets found!" >> $GITHUB_STEP_SUMMARY
             echo "Please review and move secrets to environment variables or configuration" >> $GITHUB_STEP_SUMMARY
           else

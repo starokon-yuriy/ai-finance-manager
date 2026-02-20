@@ -1,0 +1,40 @@
+needs to cover the app by tests.
+create unit test for Mappers using MapStruct, to ensure that the mapping between Entity and DTO classes is working correctly. The tests should cover all mapping methods defined in the Mapper interfaces, including mapping from Entity to DTO and from DTO to Entity. Use a testing framework like JUnit and Mockito to create mock objects and verify the mapping logic. The tests should assert that the mapped objects have the expected values based on the input data.
+
+create test for CsvExportServiceImpl to verify that the CSV file generation logic is working correctly.
+The test should cover the method responsible for generating the CSV file, ensuring that it produces a correctly formatted CSV output based on the input data. Use a testing framework like JUnit and Mockito to create mock objects for the input data and verify that the generated CSV file contains the expected content, including all required columns and correctly formatted values.
+The test should also check that the transactions are sorted by CategoryType as specified in the requirements.
+
+create tests for TransactionServiceImpl to verify the business logic for adding transactions, retrieving transactions by period, fetching all categories, and fetching transactions grouped by categories.
+The tests should cover various scenarios, including valid inputs, edge cases, and error handling.
+Use a testing framework like JUnit and Mockito to create mock objects for the Repository layer and verify that the Service layer methods are interacting with the Repository correctly and returning the expected results. The tests should assert that the business logic is functioning as intended and that the correct data is being returned based on the input parameters.
+---------------------
+
+create integration tests for the API endpoints TransactionController, to ensure that the application is functioning correctly as a whole. The tests should cover all API endpoints, including adding transactions, retrieving transactions by period, fetching all categories, fetching transactions grouped by categories, and downloading transactions as a CSV file.
+use Spring Boot Test, MockMvc, object mapper, to create integration tests that start the application context and make HTTP requests to the API endpoints.
+The tests should verify that the endpoints are returning the expected responses, including correct status codes, response bodies, and error handling.
+The tests should also ensure that the application is correctly interacting with the database and that the business logic is functioning as intended when accessed through the API.
+--------------------------
+create integration tests for the API endpoints TransactionController, to ensure that the application is functioning correctly as a whole.
+The tests should cover all API endpoints, including adding transactions, retrieving transactions by period, fetching all categories, fetching transactions grouped by categories, and downloading transactions as a CSV file.
+use mocking for TransactionService, CsvExportService services in the integration tests to isolate the controller layer and focus on testing the API endpoints without relying on the actual service implementations.
+The tests should verify that the endpoints are returning the expected responses, including correct status codes, response bodies, and error handling.
+
+use instructions from the .github/instructions/unit-test.instructions.md files to implement the required functionality in the tests, ensuring that all aspects of the application are thoroughly tested and that the tests are well-structured and maintainable.
+
+review pom.xml test dependencies to ensure that all necessary testing libraries are included, such as JUnit, Mockito, Spring Boot Test, and any other relevant testing frameworks.
+Remove any unnecessary dependencies to keep the project clean and efficient.
+use official spring boot docs like https://spring.io/guides/gs/testing-web
+-------------------------------------------
+
+there is correct dependency
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+but maven can not resolve it, review dependency tree
+and fix test maven in pom.xml
+
+
+
+

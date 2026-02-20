@@ -1,0 +1,15 @@
+lets integrate BE and FE together,  We need to ensure that the APIs are well-defined and that the data flow between the front-end
+and back-end is efficient.
+
+analyse UI code and BE code to identify the necessary API endpoints and data structures required for the integration.
+
+To integrate the back-end (BE) and front-end (FE) together, we need to follow these steps:
+for the select Category dropdown in UI, call the API @GetMapping("/categories")
+
+for the Add Income and Add Expense, call the API @PostMapping("/transactions") with the appropriate payload to create a new transaction.
+
+for the Balance tab in UI, call the API @GetMapping("/transactions") to fetch the current balance and display it to the user.
+the api should apply dates from date picker in UI, so the user can filter transactions by date range.
+and GET /transactions should be called 2 times for INCOMES and EXPENSES balances, with a parameter to specify the type of transactions (income or expense).
+
+the Dowload CSV button in UI should call the API @GetMapping("/transactions/export") to download the transactions in CSV format.
