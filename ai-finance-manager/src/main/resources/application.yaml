@@ -23,3 +23,11 @@ logging:
   level:
     org.flywaydb: INFO
 
+datawrapper:
+  access-token: ${DATAWRAPPER_ACCESS_TOKEN}
+
+mcp:
+  client:
+    enabled: true #${MCP_CLIENT_ENABLED:false}
+    command: ${MCP_CLIENT_COMMAND:/Users/ystaro/.local/bin/datawrapper-mcp}
+

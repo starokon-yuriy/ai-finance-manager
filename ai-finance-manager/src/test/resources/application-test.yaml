@@ -3,7 +3,7 @@ spring:
     name: ai-finance-manager-test
 
   datasource:
-    url: jdbc:sqlite::memory:
+    url: "jdbc:sqlite::memory:"
     driver-class-name: org.sqlite.JDBC
 
   jpa:
@@ -24,4 +24,13 @@ logging:
     org.flywaydb: INFO
     com.ys.ai.aifinancemanager: DEBUG
     org.springframework.web: DEBUG
+
+# Disable MCP client for tests — no real datawrapper-mcp process needed
+mcp:
+  client:
+    enabled: false
+    command: echo
+
+datawrapper:
+  access-token: test-token
 

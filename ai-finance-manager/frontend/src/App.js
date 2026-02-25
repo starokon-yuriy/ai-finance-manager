@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import apiService from './services/apiService';
+import BalanceChart from './components/BalanceChart';
 
 function App() {
   const [activeTab, setActiveTab] = useState('income');
@@ -10,6 +11,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [balanceView, setBalanceView] = useState('incomes'); // 'incomes' or 'expenses'
+  const [chartData, setChartData] = useState(null);
+  const [chartLoading, setChartLoading] = useState(false);
+  const [chartError, setChartError] = useState(null);
 
   const [newTransaction, setNewTransaction] = useState({
     amount: '',
@@ -39,6 +43,14 @@ function App() {
     fetchIncomeTransactions();
     fetchExpenseTransactions();
   }, []);
+
+  // Fetch balance data automatically when the Balance tab is selected
+  useEffect(() => {
+    if (activeTab === 'balance') {
+      fetchBalanceTransactions();
+      fetchBalanceChartData();
+    }
+  }, [activeTab]);
 
 
   const fetchCategories = async () => {
@@ -112,6 +124,23 @@ function App() {
     }
   };
 
+  const fetchBalanceChartData = async () => {
+    try {
+      setChartLoading(true);
+      setChartError(null);
+      const data = await apiService.getBalanceChartData(
+        balanceDateFilter.dateFrom,
+        balanceDateFilter.dateTo
+      );
+      setChartData(data);
+    } catch (error) {
+      console.error('Error fetching chart data:', error);
+      setChartError('Failed to load chart data. Please try again.');
+    } finally {
+      setChartLoading(false);
+    }
+  };
+
   const handleAddTransaction = async (e) => {
     e.preventDefault();
     try {
@@ -137,6 +166,7 @@ function App() {
         fetchExpenseTransactions();
       } else {
         fetchBalanceTransactions();
+        fetchBalanceChartData();
       }
     } catch (error) {
       console.error('Error adding transaction:', error);
@@ -394,10 +424,13 @@ function App() {
                   onChange={(e) => setBalanceDateFilter({...balanceDateFilter, dateTo: e.target.value})}
                 />
               </div>
-              <button className="apply-button" onClick={fetchBalanceTransactions}>
+              <button className="apply-button" onClick={() => { fetchBalanceTransactions(); fetchBalanceChartData(); }}>
                 Apply
               </button>
             </div>
+
+            {/* Balance Chart Section */}
+            <BalanceChart data={chartData} loading={chartLoading} error={chartError} />
 
             <div className="balance-view-toggle">
               <button

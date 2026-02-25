@@ -58,6 +58,16 @@ const apiService = {
     });
     return response.data;
   },
+
+  /**
+   * Get balance chart data (income vs expenses over time)
+   */
+  getBalanceChartData: async (dateFrom, dateTo) => {
+    const response = await axios.get(`${API_BASE_URL}/balance/chart`, {
+      params: { dateFrom, dateTo }
+    });
+    return response.data;
+  },
 };
 
 export default apiService;

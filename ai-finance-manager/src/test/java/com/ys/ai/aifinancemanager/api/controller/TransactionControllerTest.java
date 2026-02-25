@@ -7,6 +7,7 @@ import com.ys.ai.aifinancemanager.application.dto.TransactionExportResponse;
 import com.ys.ai.aifinancemanager.application.dto.TransactionExportResponse.TransactionExportDetail;
 import com.ys.ai.aifinancemanager.application.dto.TransactionsByTypeResponse;
 import com.ys.ai.aifinancemanager.application.dto.TransactionsByTypeResponse.CategoryTransactionSummary;
+import com.ys.ai.aifinancemanager.application.service.BalanceChartService;
 import com.ys.ai.aifinancemanager.application.service.CsvExportService;
 import com.ys.ai.aifinancemanager.application.service.TransactionService;
 import com.ys.ai.aifinancemanager.domain.entity.CategoryType;
@@ -57,6 +58,9 @@ class TransactionControllerTest {
 
   @MockitoBean
   private CsvExportService csvExportService;
+
+  @MockitoBean
+  private BalanceChartService balanceChartService;
 
   // ========== POST /transactions ==========
 

@@ -76,6 +76,13 @@ describe('App Component', () => {
 
     apiService.createTransaction.mockResolvedValue({});
     apiService.exportTransactionsToCsv.mockResolvedValue('CSV Content');
+    apiService.getBalanceChartData.mockResolvedValue({
+      balanceData: [],
+      totalIncome: 0,
+      totalExpense: 0,
+      netBalance: 0,
+      chartEmbedUrl: null
+    });
   });
 
   afterEach(() => {
@@ -444,6 +451,20 @@ describe('App Component', () => {
   });
 
   describe('Balance Tab Functionality', () => {
+    test('calls balance chart API when Balance tab is clicked', async () => {
+      render(<App />);
+
+      const balanceTab = screen.getByRole('button', { name: /^balance$/i });
+      fireEvent.click(balanceTab);
+
+      await waitFor(() => {
+        expect(apiService.getBalanceChartData).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.any(String)
+        );
+      });
+    });
+
     test('displays balance view toggle buttons', async () => {
       render(<App />);
 

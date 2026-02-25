@@ -1,9 +1,11 @@
 package com.ys.ai.aifinancemanager.api.controller;
 
+import com.ys.ai.aifinancemanager.application.dto.BalanceChartDataResponse;
 import com.ys.ai.aifinancemanager.application.dto.CategoryDto;
 import com.ys.ai.aifinancemanager.application.dto.CreateTransactionRequest;
 import com.ys.ai.aifinancemanager.application.dto.TransactionDto;
 import com.ys.ai.aifinancemanager.application.dto.TransactionsByTypeResponse;
+import com.ys.ai.aifinancemanager.application.service.BalanceChartService;
 import com.ys.ai.aifinancemanager.application.service.CsvExportService;
 import com.ys.ai.aifinancemanager.application.service.TransactionService;
 import com.ys.ai.aifinancemanager.domain.entity.CategoryType;
@@ -34,6 +36,8 @@ public class TransactionController {
   private final TransactionService transactionService;
 
   private final CsvExportService csvExportService;
+
+  private final BalanceChartService balanceChartService;
 
   @PostMapping("/transactions")
   public ResponseEntity<TransactionDto> addTransaction(@RequestBody CreateTransactionRequest request) {
@@ -80,5 +84,14 @@ public class TransactionController {
     log.info("Exporting CSV file: {}", filename);
 
     return new ResponseEntity<>(csvContent, headers, HttpStatus.OK);
+  }
+
+  @GetMapping("/balance/chart")
+  public ResponseEntity<BalanceChartDataResponse> getBalanceChartData(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
+    log.info("REST request to get balance chart data between {} and {}", dateFrom, dateTo);
+    var result = balanceChartService.getBalanceChartData(dateFrom, dateTo);
+    return ResponseEntity.ok(result);
   }
 }
