@@ -5,9 +5,7 @@ import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import jakarta.annotation.PreDestroy;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -36,24 +34,14 @@ public class McpDatawrapperClient {
   private static final String LAST_CHART_ID_KEY = "lastChartId";
 
   private final McpSyncClient mcpSyncClient;
-  @Getter
-  private final boolean enabled;
   private final Map<String, String> chartCache = new ConcurrentHashMap<>();
 
-  public McpDatawrapperClient(
-      McpSyncClient mcpSyncClient,
-      @Value("${mcp.client.enabled:false}") boolean enabled) {
+  public McpDatawrapperClient(McpSyncClient mcpSyncClient) {
     this.mcpSyncClient = mcpSyncClient;
-    this.enabled = enabled;
-    log.info("MCP Datawrapper client initialized (Spring AI). Enabled: {}", enabled);
+    log.info("MCP Datawrapper client initialized");
   }
 
   public String createChart(String chartType, String title, List<Map<String, Object>> data) {
-    if (!enabled) {
-      log.debug("MCP client is disabled, skipping chart creation");
-      return null;
-    }
-
     try {
       var arguments = Map.of(
           "chart_type", chartType,
@@ -76,10 +64,6 @@ public class McpDatawrapperClient {
   }
 
   public boolean updateChart(String chartId, List<Map<String, Object>> data) {
-    if (!enabled) {
-      return false;
-    }
-
     try {
       var arguments = Map.of("chart_id", chartId, "data", data);
       CallToolResult result = callTool("update_chart", arguments);
@@ -95,10 +79,6 @@ public class McpDatawrapperClient {
   }
 
   public String publishChart(String chartId) {
-    if (!enabled) {
-      return null;
-    }
-
     try {
       CallToolResult result = callTool("publish_chart", Map.of("chart_id", chartId));
       if (result != null) {

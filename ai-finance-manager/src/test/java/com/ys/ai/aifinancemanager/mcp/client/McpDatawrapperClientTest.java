@@ -37,46 +37,21 @@ class McpDatawrapperClientTest {
       Map.of("Date", "2026-01-02", "Value", 200)
   );
 
-  // ─── Disabled state tests ─────────────────────────────────────────────
-
-  @Test
-  void shouldReturnNullWhenDisabled() {
-    // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
-
-    // when/then
-    assertThat(client.isEnabled()).isFalse();
-    assertThat(client.createChart("line", "Test", SAMPLE_DATA)).isNull();
-    assertThat(client.publishChart("abc123")).isNull();
-    assertThat(client.updateChart("abc123", SAMPLE_DATA)).isFalse();
-  }
-
-  @Test
-  void shouldReportEnabledState() {
-    // given
-    var enabledClient = new McpDatawrapperClient(mcpSyncClient, true);
-    var disabledClient = new McpDatawrapperClient(mcpSyncClient, false);
-
-    // then
-    assertThat(enabledClient.isEnabled()).isTrue();
-    assertThat(disabledClient.isEnabled()).isFalse();
-  }
+  // ─── Successful chart creation tests ──────────────────────────────────
 
   @Test
   void shouldReturnNullChartIdWhenNoChartCreated() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
+    var client = new McpDatawrapperClient(mcpSyncClient);
 
     // then
     assertThat(client.getLastChartId()).isNull();
   }
 
-  // ─── Successful chart creation tests ──────────────────────────────────
-
   @Test
   void createChart_shouldReturnChartIdFromJsonResponse() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("{\"id\": \"Ab12Cd3\"}")),
         false
@@ -95,7 +70,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldReturnChartIdFromTextResponse() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Chart created successfully with chart_id: Xy45Mn6")),
         false
@@ -113,7 +88,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldPassCorrectArguments() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("{\"id\": \"test1\"}")),
         false
@@ -141,7 +116,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldExtractChartIdFromUrl() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Published at https://datawrapper.dwcdn.net/Ab1c2D/")),
         false
@@ -159,7 +134,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldExtractChartIdFromParentheses() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Chart created (Kx3Lm9)")),
         false
@@ -179,7 +154,7 @@ class McpDatawrapperClientTest {
   @Test
   void updateChart_shouldReturnTrueOnSuccess() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Chart updated successfully")),
         false
@@ -201,7 +176,7 @@ class McpDatawrapperClientTest {
   @Test
   void updateChart_shouldReturnFalseOnErrorResult() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Chart not found")),
         true
@@ -219,7 +194,7 @@ class McpDatawrapperClientTest {
   @Test
   void updateChart_shouldReturnFalseOnNullResult() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(null);
 
     // when
@@ -235,7 +210,7 @@ class McpDatawrapperClientTest {
   @Test
   void publishChart_shouldReturnEmbedUrl() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Published: https://datawrapper.dwcdn.net/Ab1c2D/")),
         false
@@ -256,7 +231,7 @@ class McpDatawrapperClientTest {
   @Test
   void publishChart_shouldReturnUrlFromJsonResponse() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("{\"publicUrl\": \"https://datawrapper.dwcdn.net/Xy9Mn1/\"}")),
         false
@@ -274,7 +249,7 @@ class McpDatawrapperClientTest {
   @Test
   void publishChart_shouldReturnNullOnError() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Publish failed")),
         true
@@ -292,7 +267,7 @@ class McpDatawrapperClientTest {
   @Test
   void publishChart_shouldReturnNullOnNullResult() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(null);
 
     // when
@@ -308,7 +283,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldReturnNullOnException() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class)))
         .thenThrow(new RuntimeException("Connection refused"));
 
@@ -323,7 +298,7 @@ class McpDatawrapperClientTest {
   @Test
   void updateChart_shouldReturnFalseOnException() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class)))
         .thenThrow(new RuntimeException("Timeout"));
 
@@ -338,7 +313,7 @@ class McpDatawrapperClientTest {
   @Test
   void publishChart_shouldReturnNullOnException() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class)))
         .thenThrow(new RuntimeException("Server error"));
 
@@ -353,7 +328,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldReturnNullWhenErrorInContentText() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Error: Unauthorized access")),
         false
@@ -371,7 +346,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldReturnNullWhenNoContent() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(List.of(), false);
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(result);
 
@@ -386,7 +361,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldReturnNullWhenNullResult() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(null);
 
     // when
@@ -402,7 +377,7 @@ class McpDatawrapperClientTest {
   @Test
   void createChart_shouldHandleEmptyData() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("{\"id\": \"Test1\"}")),
         false
@@ -422,7 +397,7 @@ class McpDatawrapperClientTest {
   @Test
   void publishChart_shouldReturnNullWhenNoUrlInContent() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("Chart published but no URL returned")),
         false
@@ -438,45 +413,9 @@ class McpDatawrapperClientTest {
   }
 
   @Test
-  void createChart_shouldNotCallMcpServerWhenDisabled() {
-    // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
-
-    // when
-    client.createChart("line", "Test", SAMPLE_DATA);
-
-    // then
-    verifyNoInteractions(mcpSyncClient);
-  }
-
-  @Test
-  void updateChart_shouldNotCallMcpServerWhenDisabled() {
-    // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
-
-    // when
-    client.updateChart("abc123", SAMPLE_DATA);
-
-    // then
-    verifyNoInteractions(mcpSyncClient);
-  }
-
-  @Test
-  void publishChart_shouldNotCallMcpServerWhenDisabled() {
-    // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
-
-    // when
-    client.publishChart("abc123");
-
-    // then
-    verifyNoInteractions(mcpSyncClient);
-  }
-
-  @Test
   void createChart_shouldCacheLastChartId() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result1 = new CallToolResult(
         List.of(new TextContent("{\"id\": \"First1\"}")),
         false
@@ -509,7 +448,7 @@ class McpDatawrapperClientTest {
   @Test
   void extractChartId_shouldReturnNullForErrorResult() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var errorResult = new CallToolResult(
         List.of(new TextContent("Something went wrong")),
         true
@@ -525,7 +464,7 @@ class McpDatawrapperClientTest {
   @Test
   void extractEmbedUrl_shouldReturnNullForErrorResult() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var errorResult = new CallToolResult(
         List.of(new TextContent("Error")),
         true
@@ -541,7 +480,7 @@ class McpDatawrapperClientTest {
   @Test
   void extractEmbedUrl_shouldReturnNullForEmptyContent() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var emptyResult = new CallToolResult(List.of(), false);
 
     // when
@@ -554,7 +493,7 @@ class McpDatawrapperClientTest {
   @Test
   void extractChartId_shouldHandleChartIdKey() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("{\"chart_id\": \"XyZ123\"}")),
         false
@@ -570,7 +509,7 @@ class McpDatawrapperClientTest {
   @Test
   void extractChartId_shouldHandleChartIdCamelCase() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
+    var client = new McpDatawrapperClient(mcpSyncClient);
     var result = new CallToolResult(
         List.of(new TextContent("{\"chartId\": \"Abc456\"}")),
         false

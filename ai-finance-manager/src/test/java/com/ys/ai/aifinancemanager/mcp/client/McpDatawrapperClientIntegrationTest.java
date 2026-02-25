@@ -34,7 +34,7 @@ class McpDatawrapperClientIntegrationTest {
   @Test
   void shouldPerformFullChartWorkflow_createUpdatePublish() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
 
     var createResult = new CallToolResult(
         List.of(new TextContent("{\"id\": \"Wf1234\"}")),
@@ -78,7 +78,7 @@ class McpDatawrapperClientIntegrationTest {
   @Test
   void shouldHandleWorkflowFailureGracefully() {
     // given
-    var client = new McpDatawrapperClient(mcpSyncClient, true);
+    var client = new McpDatawrapperClient(mcpSyncClient);
 
     when(mcpSyncClient.callTool(any(io.modelcontextprotocol.spec.McpSchema.CallToolRequest.class)))
         .thenThrow(new RuntimeException("Server unreachable"));
@@ -91,20 +91,4 @@ class McpDatawrapperClientIntegrationTest {
     assertThat(client.getLastChartId()).isNull();
   }
 
-  @Test
-  void shouldSkipEntireWorkflowWhenDisabled() {
-    // given
-    var client = new McpDatawrapperClient(mcpSyncClient, false);
-
-    // when
-    String chartId = client.createChart("line", "Test", SAMPLE_DATA);
-    boolean updated = client.updateChart("abc", UPDATED_DATA);
-    String url = client.publishChart("abc");
-
-    // then
-    assertThat(chartId).isNull();
-    assertThat(updated).isFalse();
-    assertThat(url).isNull();
-    Mockito.verifyNoInteractions(mcpSyncClient);
-  }
 }

@@ -25,11 +25,6 @@ public class DatawrapperServiceImpl implements DatawrapperService {
   @Override
   public String createOrUpdateChart(String title, List<BalanceDataPoint> data,
                                     LocalDate dateFrom, LocalDate dateTo) {
-    if (!mcpClient.isEnabled()) {
-      log.debug("MCP client is disabled, skipping Datawrapper chart creation");
-      return null;
-    }
-
     if (data == null || data.isEmpty()) {
       log.debug("No data points to chart");
       return null;
