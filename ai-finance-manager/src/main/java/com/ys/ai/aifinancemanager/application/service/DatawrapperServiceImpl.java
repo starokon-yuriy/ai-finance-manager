@@ -17,20 +17,25 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DatawrapperServiceImpl implements DatawrapperService {
 
+  public static final String CHART_TYPE = "line";
+  public static final String CHART_TITLE = "Income vs Expenses Balance";
+
+  public static final String DATAWRAPPER_URL = "https://datawrapper.dwcdn.net/";
+
   private final McpDatawrapperClient mcpClient;
   private final AgentLogService agentLogService;
 
   private String cachedChartId;
 
   @Override
-  public String createOrUpdateChart(String title, List<BalanceDataPoint> data,
+  public String createOrUpdateChart(List<BalanceDataPoint> data,
                                     LocalDate dateFrom, LocalDate dateTo) {
     if (data == null || data.isEmpty()) {
       log.debug("No data points to chart");
       return null;
     }
 
-    var fullTitle = "%s (%s to %s)".formatted(title, dateFrom, dateTo);
+    var fullTitle = "%s (%s to %s)".formatted(CHART_TITLE, dateFrom, dateTo);
     var records = convertToRecords(data);
 
     try {
@@ -58,7 +63,7 @@ public class DatawrapperServiceImpl implements DatawrapperService {
     }
 
     log.info("Creating new Datawrapper chart: {}", fullTitle);
-    String chartId = mcpClient.createChart("line", fullTitle, records);
+    String chartId = mcpClient.createChart(CHART_TYPE, fullTitle, records);
     if (chartId == null) {
       log.warn("Failed to create chart via MCP");
       return null;
@@ -77,7 +82,7 @@ public class DatawrapperServiceImpl implements DatawrapperService {
       return embedUrl;
     }
 
-    var fallbackUrl = "https://datawrapper.dwcdn.net/" + chartId + "/";
+    var fallbackUrl = DATAWRAPPER_URL + chartId + "/";
     log.info("Using fallback embed URL: {}", fallbackUrl);
     logChartInteraction(fullTitle, data.size(),
         "Chart ID: " + chartId + ", Fallback URL: " + fallbackUrl,

@@ -54,11 +54,9 @@ public class BalanceChartServiceImpl implements BalanceChartService {
 
     var netBalance = totalIncome.subtract(totalExpense);
 
-    // Try to create Datawrapper chart if service is configured
     String chartEmbedUrl = null;
     try {
-      chartEmbedUrl = datawrapperService.createOrUpdateChart(
-          "Income vs Expenses Balance", balanceData, dateFrom, dateTo);
+      chartEmbedUrl = datawrapperService.createOrUpdateChart(balanceData, dateFrom, dateTo);
       log.info("Datawrapper chart created/updated. Embed URL: {}", chartEmbedUrl);
     } catch (Exception e) {
       log.warn("Failed to create Datawrapper chart (service may not be configured): {}", e.getMessage());

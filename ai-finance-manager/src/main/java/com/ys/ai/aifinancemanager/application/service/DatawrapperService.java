@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface DatawrapperService {
 
-  String createOrUpdateChart(String title, List<BalanceDataPoint> data, LocalDate dateFrom, LocalDate dateTo);
+  String createOrUpdateChart(List<BalanceDataPoint> data, LocalDate dateFrom, LocalDate dateTo);
 }
 

@@ -45,7 +45,7 @@ class BalanceChartServiceImplTest {
     when(transactionRepository.findByCategoryTypeAndTransactionDateBetween(
         eq(CategoryType.EXPENSES), eq(dateFrom), eq(dateTo)))
         .thenReturn(Collections.emptyList());
-    when(datawrapperService.createOrUpdateChart(any(), any(), any(), any()))
+    when(datawrapperService.createOrUpdateChart(any(), any(), any()))
         .thenReturn(null);
 
     BalanceChartDataResponse result = balanceChartService.getBalanceChartData(dateFrom, dateTo);
@@ -88,7 +88,7 @@ class BalanceChartServiceImplTest {
     when(transactionRepository.findByCategoryTypeAndTransactionDateBetween(
         eq(CategoryType.EXPENSES), eq(dateFrom), eq(dateTo)))
         .thenReturn(expenses);
-    when(datawrapperService.createOrUpdateChart(any(), any(), any(), any()))
+    when(datawrapperService.createOrUpdateChart(any(), any(), any()))
         .thenReturn(null);
 
     BalanceChartDataResponse result = balanceChartService.getBalanceChartData(dateFrom, dateTo);
@@ -115,7 +115,7 @@ class BalanceChartServiceImplTest {
     when(transactionRepository.findByCategoryTypeAndTransactionDateBetween(
         eq(CategoryType.EXPENSES), eq(dateFrom), eq(dateTo)))
         .thenReturn(Collections.emptyList());
-    when(datawrapperService.createOrUpdateChart(any(), any(), any(), any()))
+    when(datawrapperService.createOrUpdateChart(any(), any(), any()))
         .thenReturn(null);
 
     BalanceChartDataResponse result = balanceChartService.getBalanceChartData(dateFrom, dateTo);
@@ -132,7 +132,7 @@ class BalanceChartServiceImplTest {
 
     when(transactionRepository.findByCategoryTypeAndTransactionDateBetween(any(), any(), any()))
         .thenReturn(Collections.emptyList());
-    when(datawrapperService.createOrUpdateChart(any(), any(), any(), any()))
+    when(datawrapperService.createOrUpdateChart(any(), any(), any()))
         .thenReturn("https://datawrapper.dwcdn.net/abc123/");
 
     BalanceChartDataResponse result = balanceChartService.getBalanceChartData(dateFrom, dateTo);
@@ -147,7 +147,7 @@ class BalanceChartServiceImplTest {
 
     when(transactionRepository.findByCategoryTypeAndTransactionDateBetween(any(), any(), any()))
         .thenReturn(Collections.emptyList());
-    when(datawrapperService.createOrUpdateChart(any(), any(), any(), any()))
+    when(datawrapperService.createOrUpdateChart(any(), any(), any()))
         .thenThrow(new RuntimeException("API error"));
 
     BalanceChartDataResponse result = balanceChartService.getBalanceChartData(dateFrom, dateTo);
@@ -166,4 +166,3 @@ class BalanceChartServiceImplTest {
         .isInstanceOf(IllegalArgumentException.class);
   }
 }
-
