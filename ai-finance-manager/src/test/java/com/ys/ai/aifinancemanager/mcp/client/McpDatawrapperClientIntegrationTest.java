@@ -62,7 +62,7 @@ class McpDatawrapperClientIntegrationTest {
     assertThat(client.getLastChartId()).isEqualTo("Wf1234");
 
     // when — update
-    boolean updated = client.updateChart(chartId, UPDATED_DATA);
+    boolean updated = client.updateChart(chartId, "Balance Chart (updated)", UPDATED_DATA);
 
     // then — chart updated
     assertThat(updated).isTrue();

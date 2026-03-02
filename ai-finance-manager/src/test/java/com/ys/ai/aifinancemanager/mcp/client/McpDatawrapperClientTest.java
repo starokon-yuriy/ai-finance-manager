@@ -162,7 +162,7 @@ class McpDatawrapperClientTest {
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(result);
 
     // when
-    boolean updated = client.updateChart("abc123", SAMPLE_DATA);
+    boolean updated = client.updateChart("abc123", "Balance (2026-01-01 to 2026-01-31)", SAMPLE_DATA);
 
     // then
     assertThat(updated).isTrue();
@@ -171,6 +171,10 @@ class McpDatawrapperClientTest {
     assertThat(captor.getValue().name()).isEqualTo("update_chart");
     assertThat(captor.getValue().arguments()).containsEntry("chart_id", "abc123");
     assertThat(captor.getValue().arguments()).containsEntry("data", SAMPLE_DATA);
+
+    @SuppressWarnings("unchecked")
+    Map<String, Object> chartConfig = (Map<String, Object>) captor.getValue().arguments().get("chart_config");
+    assertThat(chartConfig).containsEntry("title", "Balance (2026-01-01 to 2026-01-31)");
   }
 
   @Test
@@ -184,7 +188,7 @@ class McpDatawrapperClientTest {
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(result);
 
     // when
-    boolean updated = client.updateChart("nonexistent", SAMPLE_DATA);
+    boolean updated = client.updateChart("nonexistent", "My Title", SAMPLE_DATA);
 
     // then
     assertThat(updated).isFalse();
@@ -198,7 +202,7 @@ class McpDatawrapperClientTest {
     when(mcpSyncClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(null);
 
     // when
-    boolean updated = client.updateChart("abc123", SAMPLE_DATA);
+    boolean updated = client.updateChart("abc123", "My Title", SAMPLE_DATA);
 
     // then
     assertThat(updated).isFalse();
@@ -303,7 +307,7 @@ class McpDatawrapperClientTest {
         .thenThrow(new RuntimeException("Timeout"));
 
     // when
-    boolean updated = client.updateChart("abc123", SAMPLE_DATA);
+    boolean updated = client.updateChart("abc123", "My Title", SAMPLE_DATA);
 
     // then
     assertThat(updated).isFalse();

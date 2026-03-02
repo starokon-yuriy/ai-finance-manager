@@ -157,6 +157,7 @@ function BalanceChart({ data, loading, error }) {
         <div className="datawrapper-embed">
           <h4>📊 Datawrapper Interactive Chart</h4>
           <iframe
+            key={data.chartEmbedUrl}
             title="Datawrapper Balance Chart"
             src={data.chartEmbedUrl}
             width="100%"

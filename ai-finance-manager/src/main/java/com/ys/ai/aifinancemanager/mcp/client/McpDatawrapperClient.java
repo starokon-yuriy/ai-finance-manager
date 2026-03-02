@@ -63,9 +63,13 @@ public class McpDatawrapperClient {
     return null;
   }
 
-  public boolean updateChart(String chartId, List<Map<String, Object>> data) {
+  public boolean updateChart(String chartId, String title, List<Map<String, Object>> data) {
     try {
-      var arguments = Map.of("chart_id", chartId, "data", data);
+      var arguments = Map.of(
+          "chart_id", chartId,
+          "data", data,
+          "chart_config", Map.of("title", title)
+      );
       CallToolResult result = callTool("update_chart", arguments);
       if (result != null && Boolean.TRUE.equals(result.isError())) {
         logMcpErrorContent(result);

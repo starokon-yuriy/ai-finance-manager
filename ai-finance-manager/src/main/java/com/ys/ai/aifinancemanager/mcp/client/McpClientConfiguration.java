@@ -48,7 +48,7 @@ public class McpClientConfiguration {
     // Build and initialize the sync client
     var client = McpClient.sync(transport)
         .clientInfo(new Implementation("ai-finance-manager", "1.0.0"))
-        .requestTimeout(Duration.ofSeconds(30))
+        .initializationTimeout(Duration.ofSeconds(1))
         .build();
 
     try {

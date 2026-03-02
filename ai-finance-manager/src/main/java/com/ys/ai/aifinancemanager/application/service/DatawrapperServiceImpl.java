@@ -55,7 +55,7 @@ public class DatawrapperServiceImpl implements DatawrapperService {
   private String resolveChartId(String fullTitle, List<Map<String, Object>> records) {
     if (cachedChartId != null) {
       log.info("Updating existing Datawrapper chart: {}", cachedChartId);
-      boolean updated = mcpClient.updateChart(cachedChartId, records);
+      boolean updated = mcpClient.updateChart(cachedChartId, fullTitle, records);
       if (updated) {
         return cachedChartId;
       }
